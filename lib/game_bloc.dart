@@ -12,7 +12,9 @@ class GameBloc {
 
   Stream<List<ChessBoardModel>> get board => _board.stream;
 
-  Chess _chess = gameState.chess;
+  Future<Chess> _chess() async {
+    return await gameState.chess;
+  }
 
   Timer _timer;
 
@@ -29,79 +31,63 @@ class GameBloc {
     }
   }
 
-  void _printMoves() {
-    var moves = _chess.moves({"asObjects": true});
+  void _printMoves() async {
+    var moves = (await _chess()).moves({"asObjects": true});
 
     moves.forEach((move) {
       debugPrint("Type: ${move.runtimeType} - $move");
     });
   }
 
-  bool _isLegalMove(Move move) {
-    List<Move> moves = _chess.moves({"asObjects": true});
-    return moves.any((instance) {
-      return instance.from == move.from &&
-          instance.to == move.to &&
-          instance.toAlgebraic == move.toAlgebraic;
-    });
-  }
-
-  void onTap(ChessBoardModel selected) {
-    if (selected.piece != null && selected.piece.color == _chess.turn) {
+  void onTap(ChessBoardModel selected) async {
+    Chess chess = await _chess();
+    if (selected.piece != null && selected.piece.color == chess.turn) {
       if (selectedIndex == selected.index) {
+        // remove selection
         selectedIndex = -1;
       } else {
+        // select
         selectedIndex = selected.index;
       }
     } else if (selectedIndex != -1) {
       //move
-      Move move =
-          _chess.build_move(_chess.board, selectedIndex, selected.index, 0);
-      if (_isLegalMove(move)) {
-        _chess.move(move);
+      Move requestedMove =
+          chess.build_move(chess.board, selectedIndex, selected.index, 0);
+      if (chess.isLegalMove(requestedMove)) {
+        chess.move(requestedMove);
+        await gameState.save();
       }
       selectedIndex = -1;
     }
-
-/*    if (selectedIndex == -1) {
-      // select
-      if (selected.piece != null && selected.piece.color == _chess.turn) {
-        selectedIndex = selected.index;
-      }
-    } else if (selectedIndex == selected.index) {
-      // un-select
-      selectedIndex = -1;
-    } else {
-      //move
-      Move move =
-          _chess.build_move(_chess.board, selectedIndex, selected.index, 0);
-      if (_isLegalMove(move)) {
-        _chess.move(move);
-      }
-      selectedIndex = -1;
-    }*/
     _updateBoard();
   }
 
-  void randomMove() {
-    if (_chess.game_over) {
+  void randomMove() async {
+    Chess chess = await _chess();
+    if (chess.game_over) {
       _timer.cancel();
       _timer = null;
       return;
     }
 
-    var moves = _chess.moves();
+    var moves = chess.moves();
     moves.shuffle();
     var move = moves[0];
-    _chess.move(move);
+    chess.move(move);
+    await gameState.save();
     _updateBoard();
   }
 
-  void _updateBoard() {
+  void restartGame() async {
+    await gameState.restartGame();
+    _updateBoard();
+  }
+
+  void _updateBoard() async {
     // https://github.com/davecom/chess.dart/issues/13
     // https://github.com/jhlywa/chess.js/issues/37
     // https://en.wikipedia.org/wiki/Board_representation_(computer_chess)#0x88_method
-    List<Piece> input = _chess.board;
+    List<Piece> input = (await _chess()).board;
     List<ChessBoardModel> output = List();
     int i = 0;
     bool isDarkBackground = false;
@@ -122,5 +108,16 @@ class GameBloc {
     _timer?.cancel();
     _timer = null;
     _board.close();
+  }
+}
+
+extension on Chess {
+  bool isLegalMove(Move move) {
+    List<Move> moves = this.moves({"asObjects": true});
+    return moves.any((instance) {
+      return instance.from == move.from &&
+          instance.to == move.to &&
+          instance.toAlgebraic == move.toAlgebraic;
+    });
   }
 }

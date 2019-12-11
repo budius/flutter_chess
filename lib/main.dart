@@ -13,16 +13,65 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'RobotoRegular',
-      ),
-      home: Scaffold(
-          body: Provider(
-              builder: (context) => GameBloc(),
-              dispose: (context, GameBloc value) => value.onDispose(),
-              child: WidgetChessBoard())),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          fontFamily: 'RobotoRegular',
+        ),
+        home: Scaffold(
+            body: Provider(
+                builder: (context) => GameBloc(),
+                dispose: (context, GameBloc value) => value.onDispose(),
+                child: LayoutBuilder(builder: (context, constraints) {
+                  if (constraints.maxWidth > constraints.maxHeight) {
+                    return Row(
+                      children: <Widget>[
+                        WidgetChessBoard(),
+                        Column(
+                          children: <Widget>[
+                            RaisedButton(
+                              onPressed: () {
+                                GameBloc gameBloc = Provider.of(context);
+                                gameBloc.randomMove();
+                              },
+                              child: Text("Random Move"),
+                            ),
+                            RaisedButton(
+                              onPressed: () {
+                                GameBloc gameBloc = Provider.of(context);
+                                gameBloc.restartGame();
+                              },
+                              child: Text("New Game"),
+                            )
+                          ],
+                        )
+                      ],
+                    );
+                  } else {
+                    return Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            RaisedButton(
+                              onPressed: () {
+                                GameBloc gameBloc = Provider.of(context);
+                                gameBloc.randomMove();
+                              },
+                              child: Text("Random Move"),
+                            ),
+                            RaisedButton(
+                              onPressed: () {
+                                GameBloc gameBloc = Provider.of(context);
+                                gameBloc.restartGame();
+                              },
+                              child: Text("New Game"),
+                            ),
+                          ],
+                        ),
+                        WidgetChessBoard()
+                      ],
+                    );
+                  }
+                }))));
   }
 }

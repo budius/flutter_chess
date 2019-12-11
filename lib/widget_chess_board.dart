@@ -1,10 +1,8 @@
 import 'dart:math';
 
-import 'package:chess/chess.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chess/chess_board_model.dart';
 import 'package:flutter_chess/game_bloc.dart';
-import 'package:flutter_chess/game_state.dart';
 import 'package:flutter_chess/widget_board_square.dart';
 import 'package:provider/provider.dart';
 
