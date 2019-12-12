@@ -25,6 +25,7 @@ class WidgetChessBoard extends StatelessWidget {
 
 Widget _buildBoard(List<ChessBoardModel> data) {
   List<TableRow> rows = List();
+
   List<Widget> row = List();
   for (int i = 0; i < 64; i++) {
     row.add(WidgetBoardSquare(data[i]));
@@ -34,16 +35,14 @@ Widget _buildBoard(List<ChessBoardModel> data) {
     }
   }
 
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      double size = min(constraints.maxHeight, constraints.maxWidth);
-      return SizedBox(
-          width: size,
-          height: size,
-          child: Table(
-            border: TableBorder.all(),
-            children: rows,
-          ));
-    },
+  Widget table = Table(
+    defaultColumnWidth: FixedColumnWidth(10),
+    border: TableBorder.all(),
+    children: rows,
+  );
+
+  return AspectRatio(
+    aspectRatio: 1,
+    child: table,
   );
 }
