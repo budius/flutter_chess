@@ -26,13 +26,12 @@ class WidgetChessBoard extends StatelessWidget {
 Widget _buildBoard(List<ChessBoardModel> data) {
   List<TableRow> rows = List();
 
-  List<Widget> row = List();
-  for (int i = 0; i < 64; i++) {
-    row.add(WidgetBoardSquare(data[i]));
-    if (row.length == 8) {
-      rows.add(TableRow(children: row));
-      row = List();
-    }
+  for (int index = 0; index < 8; index++) {
+    int start = index * 8;
+    rows.add(TableRow(
+        children: data.getRange(start, start + 8).map((item) {
+      return WidgetBoardSquare(item);
+    }).toList()));
   }
 
   Widget table = Table(
