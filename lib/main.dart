@@ -16,17 +16,19 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           fontFamily: 'RobotoRegular',
         ),
-        home: Scaffold(
-            body: Provider(
-                builder: (context) => GameBloc(),
-                dispose: (context, GameBloc value) => value.onDispose(),
-                child: LayoutBuilder(builder: (context, constraints) {
-                  if (constraints.maxWidth > constraints.maxHeight) {
-                    return buildHorizontal(context);
-                  } else {
-                    return buildVertical(context);
-                  }
-                }))));
+        home: SafeArea(
+          child: Scaffold(
+              body: Provider(
+                  builder: (context) => GameBloc(),
+                  dispose: (context, GameBloc value) => value.onDispose(),
+                  child: LayoutBuilder(builder: (context, constraints) {
+                    if (constraints.maxWidth > constraints.maxHeight) {
+                      return buildHorizontal(context);
+                    } else {
+                      return buildVertical(context);
+                    }
+                  }))),
+        ));
   }
 
   Widget buildHorizontal(BuildContext context) {
