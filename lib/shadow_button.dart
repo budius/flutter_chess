@@ -19,7 +19,6 @@ class ShadowButton extends StatelessWidget {
       child: GestureDetector(
         onTap: onPressed,
         child: Container(
-          //width: 200,
           height: 48,
           child: Row(
             children: <Widget>[
