@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:chess/chess.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_chess/chess_board_model.dart';
 import 'package:flutter_chess/save_game.dart';
 import 'package:rxdart/rxdart.dart';
@@ -30,15 +29,6 @@ class GameBloc {
     _chess = await SaveGame.load();
     _loadCompleter.complete();
     _updateBoard();
-  }
-
-  void _printMoves() async {
-    _awaitIsLoaded();
-    var moves = _chess.moves({"asObjects": true});
-
-    moves.forEach((move) {
-      debugPrint("Type: ${move.runtimeType} - $move");
-    });
   }
 
   void onTap(ChessBoardModel selected) async {

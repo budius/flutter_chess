@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         home: SafeArea(
           child: Scaffold(
               body: Provider(
-                  builder: (context) => GameBloc(),
+                  create: (context) => GameBloc(),
                   dispose: (context, GameBloc value) => value.onDispose(),
                   child: LayoutBuilder(builder: (context, constraints) {
                     if (constraints.maxWidth > constraints.maxHeight) {
